@@ -3429,6 +3429,13 @@ err:
 
 }
 
+
+#ifndef CONFIG_SOUND_CONTROL_HAX_3_GPL
+static
+#endif
+int taiko_write(struct snd_soc_codec *codec, unsigned int reg,
+	unsigned int value);
+
 static int taiko_hph_pa_event(struct snd_soc_dapm_widget *w,
 			      struct snd_kcontrol *kcontrol, int event)
 {
@@ -3471,6 +3478,13 @@ static int taiko_hph_pa_event(struct snd_soc_dapm_widget *w,
 						 req_clsh_state,
 						 WCD9XXX_CLSH_REQ_ENABLE,
 						 WCD9XXX_CLSH_EVENT_POST_PA);
+
+		// This lowers the volume and decreases the noise level massively
+		taiko_write(codec, TAIKO_A_RX_HPH_L_GAIN, 62);
+		taiko_write(codec, TAIKO_A_RX_HPH_R_GAIN, 62);
+		// This increases the volume back to 'normal'
+		taiko_write(codec, TAIKO_A_CDC_RX1_VOL_CTL_B2_CTL, 12);
+		taiko_write(codec, TAIKO_A_CDC_RX2_VOL_CTL_B2_CTL, 12);
 
 		break;
 
